@@ -47,6 +47,8 @@ public class DotProductDemo : MonoBehaviour
         float dotProduct = Vector3.Dot(forward, toTarget);
 
         // 计算夹角（弧度转角度）
+        // Clamp防止浮点误差导致超出[-1,1]范围
+        dotProduct = Mathf.Clamp(dotProduct, -1f, 1f);
         float angle = Mathf.Acos(dotProduct) * Mathf.Rad2Deg;
 
         // 显示向量
@@ -84,11 +86,14 @@ public class DotProductDemo : MonoBehaviour
             float projectionLength = Vector3.Dot(toTarget, forward);
             Vector3 projection = forward * projectionLength;
 
+            // 计算一次距离，避免重复计算
+            float distance = Vector3.Distance(observerPos, targetPos);
+
             Gizmos.color = Color.green;
-            DrawArrow(observerPos, observerPos + projection * Vector3.Distance(observerPos, targetPos), 0.25f);
+            DrawArrow(observerPos, observerPos + projection * distance, 0.25f);
 
             // 投影点
-            Vector3 projectionPoint = observerPos + projection * Vector3.Distance(observerPos, targetPos);
+            Vector3 projectionPoint = observerPos + projection * distance;
             Gizmos.DrawWireSphere(projectionPoint, 0.1f);
 
             // 从投影点到目标的垂直线
@@ -219,6 +224,7 @@ public class DotProductDemo : MonoBehaviour
             Vector3 forward = observer.forward;
             Vector3 toTarget = (target.position - observer.position).normalized;
             float dot = Vector3.Dot(forward, toTarget);
+            dot = Mathf.Clamp(dot, -1f, 1f);  // 防止浮点误差
             float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
 
             Debug.Log("=== 点积示例 ===");
