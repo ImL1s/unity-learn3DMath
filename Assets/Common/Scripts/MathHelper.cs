@@ -292,7 +292,7 @@ public static class MathHelper
         {
             // 平行
             t1 = 0f;
-            t2 = e / c;
+            t2 = (Mathf.Abs(c) < EPSILON) ? 0f : (e / c);  // 安全检查，避免除零
         }
         else
         {

@@ -178,10 +178,27 @@ unity-learn3DMath/
 5. **查看文档**：`Docs/` 目录下有每个主题的详细理论说明
 
 ### 快速开始
-1. 克隆或下载项目
-2. 用Unity打开项目
-3. 从 `Assets/Scenes/MainMenu.unity` 开始
-4. 或直接打开感兴趣的示例场景
+
+#### 方法1：运行单元测试（推荐）
+验证项目功能正常：
+1. 用Unity打开项目
+2. 创建新场景，添加空GameObject
+3. 添加 `MathTests` 组件
+4. 点击Play，查看Console输出（应该看到15/15测试通过）
+
+详细步骤请查看 → [QUICKSTART.md](QUICKSTART.md)
+
+#### 方法2：可视化示例
+体验向量的可视化效果：
+1. 创建空GameObject，添加 `VectorBasics` 组件
+2. 创建两个空GameObject作为PointA和PointB
+3. 连接引用，在Scene视图中观察向量可视化
+4. 移动点A和点B，观察实时变化
+
+#### 方法3：查看文档学习
+- **快速上手**: [QUICKSTART.md](QUICKSTART.md) - 5分钟快速开始
+- **代码审查**: [CODE_REVIEW.md](CODE_REVIEW.md) - 代码质量报告
+- **学习路径**: [Docs/LearningPath.md](Docs/LearningPath.md) - 8周完整学习计划
 
 ## 📖 学习资源
 
