@@ -33,6 +33,79 @@ public class VectorProjectionDemo : MonoBehaviour
     public Color projectionColor = Color.green;
     public Color rejectionColor = Color.yellow;
 
+    void Start()
+    {
+        // 自动创建演示对象（如果为空）
+        if (pointA == null)
+        {
+            GameObject objA = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            objA.name = "PointA";
+            pointA = objA.transform;
+            pointA.position = new Vector3(1, 2, 1);
+            pointA.localScale = Vector3.one * 0.3f;
+
+            Renderer renderer = objA.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = vectorColor;
+                renderer.material = mat;
+            }
+        }
+
+        if (lineStart == null)
+        {
+            GameObject start = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            start.name = "LineStart";
+            lineStart = start.transform;
+            lineStart.position = new Vector3(-2, 0, 0);
+            lineStart.localScale = Vector3.one * 0.25f;
+
+            Renderer renderer = start.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = lineColor;
+                renderer.material = mat;
+            }
+        }
+
+        if (lineEnd == null)
+        {
+            GameObject end = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            end.name = "LineEnd";
+            lineEnd = end.transform;
+            lineEnd.position = new Vector3(3, 0, 0);
+            lineEnd.localScale = Vector3.one * 0.25f;
+
+            Renderer renderer = end.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = lineColor;
+                renderer.material = mat;
+            }
+        }
+
+        if (lightDirection == null)
+        {
+            GameObject light = new GameObject("LightDirection");
+            lightDirection = light.transform;
+            lightDirection.position = new Vector3(2, 3, 0);
+            lightDirection.rotation = Quaternion.Euler(45, -45, 0);
+        }
+
+        if (surfaceNormal == null)
+        {
+            GameObject normal = new GameObject("SurfaceNormal");
+            surfaceNormal = normal.transform;
+            surfaceNormal.position = Vector3.zero;
+            surfaceNormal.rotation = Quaternion.Euler(0, 0, 0);
+        }
+
+        Debug.Log("VectorProjectionDemo: 已自动创建所有演示对象");
+    }
+
     void OnDrawGizmos()
     {
         if (pointA == null || lineStart == null || lineEnd == null) return;

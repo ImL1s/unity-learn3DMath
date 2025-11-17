@@ -44,6 +44,100 @@ public class QuaternionRotation : MonoBehaviour
         RotateTowards   // 旋转到目标
     }
 
+    void Start()
+    {
+        // 自动创建旋转对象（如果为空）
+        if (rotatingObject == null)
+        {
+            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            obj.name = "RotatingObject";
+            rotatingObject = obj.transform;
+            rotatingObject.position = transform.position;
+            rotatingObject.localScale = Vector3.one * 0.8f;
+
+            Renderer renderer = obj.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = Color.cyan;
+                renderer.material = mat;
+            }
+        }
+
+        if (startRotation == null)
+        {
+            GameObject startObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            startObj.name = "StartRotation";
+            startRotation = startObj.transform;
+            startRotation.position = transform.position + new Vector3(-3, 0, 0);
+            startRotation.rotation = Quaternion.Euler(0, 0, 0);
+            startRotation.localScale = Vector3.one * 0.6f;
+
+            Renderer renderer = startObj.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = new Color(0f, 1f, 0f, 0.5f);
+                renderer.material = mat;
+            }
+        }
+
+        if (endRotation == null)
+        {
+            GameObject endObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            endObj.name = "EndRotation";
+            endRotation = endObj.transform;
+            endRotation.position = transform.position + new Vector3(3, 0, 0);
+            endRotation.rotation = Quaternion.Euler(45, 90, 30);
+            endRotation.localScale = Vector3.one * 0.6f;
+
+            Renderer renderer = endObj.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = new Color(1f, 0f, 0f, 0.5f);
+                renderer.material = mat;
+            }
+        }
+
+        if (lookAtTarget == null)
+        {
+            GameObject targetObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            targetObj.name = "LookAtTarget";
+            lookAtTarget = targetObj.transform;
+            lookAtTarget.position = transform.position + new Vector3(2, 1, 3);
+            lookAtTarget.localScale = Vector3.one * 0.4f;
+
+            Renderer renderer = targetObj.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = Color.red;
+                renderer.material = mat;
+            }
+        }
+
+        if (targetRotation == null)
+        {
+            GameObject rotTargetObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            rotTargetObj.name = "TargetRotation";
+            targetRotation = rotTargetObj.transform;
+            targetRotation.position = transform.position + new Vector3(0, 0, 4);
+            targetRotation.rotation = Quaternion.Euler(30, 45, 60);
+            targetRotation.localScale = Vector3.one * 0.6f;
+
+            Renderer renderer = rotTargetObj.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = new Color(1f, 0.5f, 0f, 0.5f);
+                renderer.material = mat;
+            }
+        }
+
+        Debug.Log("QuaternionRotation: 已自动创建所有旋转演示对象");
+    }
+
     void Update()
     {
         if (rotatingObject == null) return;

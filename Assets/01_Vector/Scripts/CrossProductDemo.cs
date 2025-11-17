@@ -30,6 +30,63 @@ public class CrossProductDemo : MonoBehaviour
     public Color colorCross = Color.green;
     public Color colorTriangle = new Color(1f, 1f, 0f, 0.3f);
 
+    void Start()
+    {
+        // 自动创建演示对象（如果为空）
+        if (pointA == null)
+        {
+            GameObject objA = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            objA.name = "PointA";
+            pointA = objA.transform;
+            pointA.position = transform.position + new Vector3(2, 0, 0);
+            pointA.localScale = Vector3.one * 0.3f;
+
+            Renderer renderer = objA.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = colorA;
+                renderer.material = mat;
+            }
+        }
+
+        if (pointB == null)
+        {
+            GameObject objB = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            objB.name = "PointB";
+            pointB = objB.transform;
+            pointB.position = transform.position + new Vector3(1, 0, 2);
+            pointB.localScale = Vector3.one * 0.3f;
+
+            Renderer renderer = objB.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = colorB;
+                renderer.material = mat;
+            }
+        }
+
+        if (testPoint == null)
+        {
+            GameObject testObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            testObj.name = "TestPoint";
+            testPoint = testObj.transform;
+            testPoint.position = transform.position + new Vector3(0.5f, 0, 1.5f);
+            testPoint.localScale = Vector3.one * 0.3f;
+
+            Renderer renderer = testObj.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = Color.yellow;
+                renderer.material = mat;
+            }
+        }
+
+        Debug.Log("CrossProductDemo: 已自动创建PointA, PointB和TestPoint");
+    }
+
     void OnDrawGizmos()
     {
         if (pointA == null || pointB == null) return;

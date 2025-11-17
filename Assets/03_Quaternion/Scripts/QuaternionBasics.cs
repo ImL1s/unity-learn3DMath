@@ -36,6 +36,29 @@ public class QuaternionBasics : MonoBehaviour
     [Range(-90, 90)]
     public float gimbalPitch = 0f;
 
+    void Start()
+    {
+        // 自动创建目标对象（如果为空）
+        if (targetObject == null)
+        {
+            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            obj.name = "TargetObject";
+            targetObject = obj.transform;
+            targetObject.position = transform.position;
+            targetObject.localScale = Vector3.one;
+
+            Renderer renderer = obj.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = Color.cyan;
+                renderer.material = mat;
+            }
+        }
+
+        Debug.Log("QuaternionBasics: 已自动创建TargetObject");
+    }
+
     void OnDrawGizmos()
     {
         if (targetObject == null) return;

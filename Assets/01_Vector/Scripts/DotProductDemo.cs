@@ -31,6 +31,47 @@ public class DotProductDemo : MonoBehaviour
 
     private bool isInFOV = false;
 
+    void Start()
+    {
+        // 自动创建演示对象（如果为空）
+        if (observer == null)
+        {
+            GameObject obs = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            obs.name = "Observer";
+            observer = obs.transform;
+            observer.position = Vector3.zero;
+            observer.rotation = Quaternion.Euler(0, 45, 0);
+            observer.localScale = new Vector3(0.5f, 1f, 0.5f);
+
+            Renderer renderer = obs.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = Color.blue;
+                renderer.material = mat;
+            }
+        }
+
+        if (target == null)
+        {
+            GameObject targ = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            targ.name = "Target";
+            target = targ.transform;
+            target.position = new Vector3(3, 0, 2);
+            target.localScale = Vector3.one * 0.4f;
+
+            Renderer renderer = targ.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = Color.red;
+                renderer.material = mat;
+            }
+        }
+
+        Debug.Log("DotProductDemo: 已自动创建Observer和Target");
+    }
+
     void OnDrawGizmos()
     {
         if (observer == null || target == null) return;

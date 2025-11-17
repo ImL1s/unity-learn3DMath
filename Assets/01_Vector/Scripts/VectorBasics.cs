@@ -25,6 +25,46 @@ public class VectorBasics : MonoBehaviour
     public Color colorResult = Color.green;
     public Color colorNormalized = Color.yellow;
 
+    void Start()
+    {
+        // 自动创建演示对象（如果为空）
+        if (pointA == null)
+        {
+            GameObject objA = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            objA.name = "PointA";
+            pointA = objA.transform;
+            pointA.position = new Vector3(2, 1, 0);
+            pointA.localScale = Vector3.one * 0.3f;
+
+            Renderer renderer = objA.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = colorA;
+                renderer.material = mat;
+            }
+        }
+
+        if (pointB == null)
+        {
+            GameObject objB = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            objB.name = "PointB";
+            pointB = objB.transform;
+            pointB.position = new Vector3(-1, 2, 0);
+            pointB.localScale = Vector3.one * 0.3f;
+
+            Renderer renderer = objB.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = colorB;
+                renderer.material = mat;
+            }
+        }
+
+        Debug.Log("VectorBasics: 已自动创建PointA和PointB");
+    }
+
     void OnDrawGizmos()
     {
         if (pointA == null || pointB == null) return;
