@@ -47,13 +47,25 @@ public class RaycastDemo : MonoBehaviour
         BoxCast,        // 盒形投射
         CapsuleCast,    // 胶囊投射
         RaycastAll,     // 检测所有
-        MouseRay        // 鼠标射线
+        MouseRay,       // 鼠标射线
+        LineOfSight     // 视线检测
     }
 
     void Start()
     {
         if (raycastCamera == null)
             raycastCamera = Camera.main;
+
+        // 自动创建rayOrigin（如果为空）
+        if (rayOrigin == null)
+        {
+            GameObject originObj = new GameObject("RayOrigin");
+            rayOrigin = originObj.transform;
+            rayOrigin.position = transform.position;
+            rayOrigin.SetParent(transform);
+
+            Debug.Log("已自动创建RayOrigin对象");
+        }
     }
 
     void Update()
@@ -109,6 +121,13 @@ public class RaycastDemo : MonoBehaviour
                     Ray mouseRay = GetMouseRay();
                     hasHit = Physics.Raycast(mouseRay, out lastHit, Mathf.Infinity, hitLayers, triggerInteraction);
                 }
+                break;
+
+            case RaycastMode.LineOfSight:
+                // 视线检测：检查从rayOrigin到某个目标点的路径是否被遮挡
+                // 这里使用rayDirection作为目标方向
+                hasHit = Physics.Raycast(ray, out lastHit, rayLength, hitLayers, triggerInteraction);
+                // LineOfSight模式下，hasHit=true表示视线被遮挡
                 break;
         }
     }

@@ -235,17 +235,24 @@ public class ProjectileMotion : MonoBehaviour
 
     void LaunchProjectile()
     {
-        if (projectilePrefab == null || launchPoint == null)
+        if (launchPoint == null)
         {
-            Debug.LogWarning("未设置发射物预制体或发射点！");
+            Debug.LogWarning("未设置发射点！");
             return;
         }
 
-        GameObject projectile = Instantiate(projectilePrefab, launchPoint.position, Quaternion.identity);
+        GameObject projectile;
 
-        Rigidbody rb = projectile.GetComponent<Rigidbody>();
-        if (rb != null)
+        // 如果没有预制体，自动创建一个简单的球体
+        if (projectilePrefab == null)
         {
+            projectile = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            projectile.name = "Projectile";
+            projectile.transform.position = launchPoint.position;
+            projectile.transform.localScale = Vector3.one * 0.3f;
+
+            // 添加Rigidbody
+            Rigidbody rb = projectile.AddComponent<Rigidbody>();
             rb.useGravity = true;
             rb.velocity = launchVelocity;
 
@@ -254,6 +261,34 @@ public class ProjectileMotion : MonoBehaviour
             {
                 rb.useGravity = false;
                 projectile.AddComponent<CustomGravity>().gravityStrength = gravity;
+            }
+
+            // 添加颜色
+            Renderer renderer = projectile.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = Color.yellow;
+                renderer.material = mat;
+            }
+        }
+        else
+        {
+            // 使用预制体
+            projectile = Instantiate(projectilePrefab, launchPoint.position, Quaternion.identity);
+
+            Rigidbody rb = projectile.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.useGravity = true;
+                rb.velocity = launchVelocity;
+
+                // 设置自定义重力
+                if (Mathf.Abs(gravity - 9.8f) > 0.1f)
+                {
+                    rb.useGravity = false;
+                    projectile.AddComponent<CustomGravity>().gravityStrength = gravity;
+                }
             }
         }
 

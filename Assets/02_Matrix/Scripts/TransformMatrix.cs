@@ -38,6 +38,51 @@ public class TransformMatrix : MonoBehaviour
     private Matrix4x4 transformMatrix;
     private float animationTime = 0f;
 
+    void Start()
+    {
+        // 自动创建源对象（如果为空）
+        if (sourceObject == null)
+        {
+            GameObject sourceObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            sourceObj.name = "SourceObject";
+            sourceObject = sourceObj.transform;
+            sourceObject.position = transform.position + new Vector3(-3, 0, 0);
+            sourceObject.localScale = Vector3.one * 0.5f;
+
+            // 添加颜色
+            Renderer renderer = sourceObject.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = Color.green;
+                renderer.material = mat;
+            }
+        }
+
+        // 自动创建变换对象（如果为空）
+        if (transformedObjects == null || transformedObjects.Length == 0)
+        {
+            transformedObjects = new Transform[1];
+
+            GameObject transformedObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            transformedObj.name = "TransformedObject";
+            transformedObjects[0] = transformedObj.transform;
+            transformedObjects[0].position = transform.position + new Vector3(3, 0, 0);
+            transformedObjects[0].localScale = Vector3.one * 0.5f;
+
+            // 添加颜色
+            Renderer renderer = transformedObjects[0].GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = Color.cyan;
+                renderer.material = mat;
+            }
+        }
+
+        Debug.Log("TransformMatrix: 已自动创建演示对象");
+    }
+
     public enum TransformType
     {
         Shear,              // 切变
@@ -198,7 +243,7 @@ public class TransformMatrix : MonoBehaviour
     {
         if (sourceObject == null || transformedObjects == null) return;
 
-        // 获取源对象的顶点位置（简化：只使用位置）
+        // 获取源对象的位置和基础变换
         Vector3 sourcePos = sourceObject.position;
 
         // 应用变换到每个目标对象
@@ -209,36 +254,94 @@ public class TransformMatrix : MonoBehaviour
                 // 计算相对位置
                 Vector3 relativePos = sourcePos - transform.position;
 
-                // 应用变换矩阵
+                // 应用变换矩阵到位置
                 Vector3 transformedPos = transformMatrix.MultiplyPoint3x4(relativePos);
-
-                // 设置变换后的位置
                 transformedObjects[i].position = transform.position + transformedPos;
 
-                // 对于某些变换，还需要调整旋转和缩放
-                if (transformType == TransformType.Mirror)
+                // 根据变换类型应用完整的TRS
+                switch (transformType)
                 {
-                    transformedObjects[i].rotation = sourceObject.rotation;
-                    Vector3 scale = sourceObject.localScale;
+                    case TransformType.Mirror:
+                        ApplyMirrorTransform(i);
+                        break;
 
-                    // 镜像时反转对应的缩放
-                    switch (mirrorPlane)
-                    {
-                        case MirrorPlane.XZ:
-                            scale.y = -scale.y;
-                            break;
-                        case MirrorPlane.XY:
-                            scale.z = -scale.z;
-                            break;
-                        case MirrorPlane.YZ:
-                            scale.x = -scale.x;
-                            break;
-                    }
+                    case TransformType.Shear:
+                    case TransformType.CustomTransform:
+                        // 切变和自定义变换：尝试从矩阵提取旋转
+                        if (transformMatrix.ValidTRS())
+                        {
+                            transformedObjects[i].rotation = transformMatrix.rotation;
+                            transformedObjects[i].localScale = transformMatrix.lossyScale;
+                        }
+                        else
+                        {
+                            // 非标准变换，保持源对象的旋转和缩放
+                            transformedObjects[i].rotation = sourceObject.rotation;
+                            transformedObjects[i].localScale = sourceObject.localScale;
+                        }
+                        break;
 
-                    transformedObjects[i].localScale = scale;
+                    case TransformType.Projection:
+                        // 投影变换：缩放变为0的维度
+                        ApplyProjectionTransform(i);
+                        break;
+
+                    case TransformType.NonUniformScale:
+                        transformedObjects[i].rotation = sourceObject.rotation;
+                        transformedObjects[i].localScale = transformMatrix.lossyScale;
+                        break;
+
+                    default:
+                        transformedObjects[i].rotation = sourceObject.rotation;
+                        transformedObjects[i].localScale = sourceObject.localScale;
+                        break;
                 }
             }
         }
+    }
+
+    void ApplyMirrorTransform(int index)
+    {
+        transformedObjects[index].rotation = sourceObject.rotation;
+        Vector3 scale = sourceObject.localScale;
+
+        // 镜像时反转对应的缩放
+        switch (mirrorPlane)
+        {
+            case MirrorPlane.XZ:
+                scale.y = -scale.y;
+                break;
+            case MirrorPlane.XY:
+                scale.z = -scale.z;
+                break;
+            case MirrorPlane.YZ:
+                scale.x = -scale.x;
+                break;
+        }
+
+        transformedObjects[index].localScale = scale;
+    }
+
+    void ApplyProjectionTransform(int index)
+    {
+        transformedObjects[index].rotation = sourceObject.rotation;
+        Vector3 scale = sourceObject.localScale;
+
+        // 投影时消除一个维度的缩放
+        switch (projectionPlane)
+        {
+            case ProjectionPlane.XZ:
+                scale.y = 0.01f; // 几乎为0，避免完全消失
+                break;
+            case ProjectionPlane.XY:
+                scale.z = 0.01f;
+                break;
+            case ProjectionPlane.YZ:
+                scale.x = 0.01f;
+                break;
+        }
+
+        transformedObjects[index].localScale = scale;
     }
 
     void OnDrawGizmos()

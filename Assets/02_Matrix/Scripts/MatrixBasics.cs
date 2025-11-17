@@ -29,6 +29,48 @@ public class MatrixBasics : MonoBehaviour
     private Matrix4x4 matrixB;
     private Matrix4x4 resultMatrix;
 
+    void Start()
+    {
+        // 自动创建演示对象（如果为空）
+        if (cubeA == null)
+        {
+            GameObject cubeAObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cubeAObj.name = "CubeA";
+            cubeA = cubeAObj.transform;
+            cubeA.position = transform.position + new Vector3(-2, 0, 0);
+            cubeA.rotation = Quaternion.Euler(0, 30, 0);
+            cubeA.localScale = Vector3.one * 0.8f;
+
+            // 添加颜色
+            Renderer renderer = cubeA.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = Color.green;
+                renderer.material = mat;
+            }
+        }
+
+        if (cubeB == null)
+        {
+            GameObject cubeBObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cubeBObj.name = "CubeB";
+            cubeB = cubeBObj.transform;
+            cubeB.position = transform.position + new Vector3(2, 0, 0);
+
+            // 添加颜色
+            Renderer renderer = cubeB.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = Color.cyan;
+                renderer.material = mat;
+            }
+        }
+
+        Debug.Log("MatrixBasics: 已自动创建演示对象");
+    }
+
     public enum MatrixOperation
     {
         Identity,           // 单位矩阵

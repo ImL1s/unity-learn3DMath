@@ -32,6 +32,65 @@ public class ParentChildHierarchy : MonoBehaviour
 
     private float animationTime = 0f;
 
+    void Start()
+    {
+        // 自动创建层级结构（如果引用为空）
+        if (grandParent == null && parent == null && child == null)
+        {
+            CreateHierarchyAutomatically();
+        }
+    }
+
+    void CreateHierarchyAutomatically()
+    {
+        // 创建祖父对象
+        GameObject grandParentObj = new GameObject("Grandparent");
+        grandParent = grandParentObj.transform;
+        grandParent.position = transform.position + new Vector3(-3, 0, 0);
+        grandParent.localScale = new Vector3(1.2f, 1.2f, 1.2f);
+
+        // 创建父对象
+        GameObject parentObj = new GameObject("Parent");
+        parent = parentObj.transform;
+        parent.SetParent(grandParent);
+        parent.localPosition = new Vector3(2, 0, 0);
+        parent.localRotation = Quaternion.Euler(0, 30, 0);
+        parent.localScale = new Vector3(1.1f, 1.1f, 1.1f);
+
+        // 创建子对象
+        GameObject childObj = new GameObject("Child");
+        child = childObj.transform;
+        child.SetParent(parent);
+        child.localPosition = new Vector3(1.5f, 0, 0);
+        child.localRotation = Quaternion.Euler(0, 0, 45);
+        child.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+
+        // 为每个对象添加可视化组件（创建立方体）
+        CreateVisualCube(grandParent, Color.red, 0.5f);
+        CreateVisualCube(parent, Color.green, 0.4f);
+        CreateVisualCube(child, Color.blue, 0.3f);
+
+        Debug.Log("已自动创建三级层级结构: Grandparent → Parent → Child");
+    }
+
+    void CreateVisualCube(Transform target, Color color, float size)
+    {
+        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube.transform.SetParent(target);
+        cube.transform.localPosition = Vector3.zero;
+        cube.transform.localScale = Vector3.one * size;
+        cube.name = "Visual";
+
+        // 设置颜色
+        Renderer renderer = cube.GetComponent<Renderer>();
+        if (renderer != null)
+        {
+            Material mat = new Material(Shader.Find("Standard"));
+            mat.color = color;
+            renderer.material = mat;
+        }
+    }
+
     void Update()
     {
         // 动画

@@ -32,6 +32,7 @@ public class DistanceCalculation : MonoBehaviour
 
     private float calculatedDistance;
     private Vector3 closestPoint;
+    private Vector3 closestPoint2; // 用于线段到线段距离的第二个最近点
 
     public enum DistanceMode
     {
@@ -40,6 +41,50 @@ public class DistanceCalculation : MonoBehaviour
         PointToPlane,       // 点到平面
         PointToBounds,      // 点到边界框
         LinesToLines        // 两条线段最近距离
+    }
+
+    void Start()
+    {
+        // 自动创建测试对象（如果为空）
+        if (testPoint == null)
+        {
+            GameObject testObj = new GameObject("TestPoint");
+            testPoint = testObj.transform;
+            testPoint.position = transform.position;
+            testPoint.SetParent(transform);
+        }
+
+        if (targetPoint == null)
+        {
+            GameObject targetObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            targetObj.name = "TargetPoint";
+            targetPoint = targetObj.transform;
+            targetPoint.position = transform.position + new Vector3(3, 0, 0);
+            targetPoint.localScale = Vector3.one * 0.3f;
+        }
+
+        if (lineStart == null)
+        {
+            GameObject startObj = new GameObject("LineStart");
+            lineStart = startObj.transform;
+            lineStart.position = transform.position + new Vector3(0, 0, 2);
+        }
+
+        if (lineEnd == null)
+        {
+            GameObject endObj = new GameObject("LineEnd");
+            lineEnd = endObj.transform;
+            lineEnd.position = transform.position + new Vector3(2, 0, 3);
+        }
+
+        if (planePoint == null)
+        {
+            GameObject planeObj = new GameObject("PlanePoint");
+            planePoint = planeObj.transform;
+            planePoint.position = transform.position + new Vector3(0, -2, 0);
+        }
+
+        Debug.Log("已自动创建距离计算测试对象");
     }
 
     void Update()
@@ -112,16 +157,12 @@ public class DistanceCalculation : MonoBehaviour
         Vector3 p3 = targetPoint.position;
         Vector3 p4 = planePoint.position;
 
-        Vector3 closest1, closest2;
-        ClosestPointsBetweenLineSegments(p1, p2, p3, p4, out closest1, out closest2);
+        Vector3 closest1, closest2Temp;
+        ClosestPointsBetweenLineSegments(p1, p2, p3, p4, out closest1, out closest2Temp);
 
         closestPoint = closest1;
-        Vector3 closestPoint2 = closest2;
-        calculatedDistance = Vector3.Distance(closest1, closest2);
-
-        // 绘制两个最近点
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(closest2, 0.15f);
+        closestPoint2 = closest2Temp; // 存储到成员变量，在OnDrawGizmos中绘制
+        calculatedDistance = Vector3.Distance(closest1, closest2Temp);
     }
 
     void ClosestPointsBetweenLineSegments(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4,
@@ -377,9 +418,15 @@ public class DistanceCalculation : MonoBehaviour
         {
             Gizmos.color = closestPointColor;
             Gizmos.DrawWireSphere(closestPoint, 0.15f);
+            DrawLabel(closestPoint + Vector3.up * 0.3f, "最近点1");
 
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(closestPoint2, 0.15f);
+            DrawLabel(closestPoint2 + Vector3.up * 0.3f, "最近点2");
+
+            // 绘制两个最近点之间的连线
             Gizmos.color = distanceLineColor;
-            // closestPoint2在CalculateLineToLineDistance中已绘制
+            Gizmos.DrawLine(closestPoint, closestPoint2);
         }
     }
 
