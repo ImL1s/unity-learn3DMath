@@ -488,8 +488,8 @@ public class ProjectileMotion : MonoBehaviour
 
         if (projectilePrefab == null)
         {
-            GUI.color = Color.red;
-            GUILayout.Label("\n警告: 未设置发射物预制体！");
+            GUI.color = Color.yellow;
+            GUILayout.Label("\n提示: 将自动创建黄色球体抛射物");
             GUI.color = Color.white;
         }
 

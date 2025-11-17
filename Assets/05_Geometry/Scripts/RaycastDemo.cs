@@ -29,6 +29,9 @@ public class RaycastDemo : MonoBehaviour
     public bool useMouseRay = false;
     public Camera raycastCamera;
 
+    [Header("视线检测目标")]
+    public Transform lineOfSightTarget;
+
     [Header("显示选项")]
     public bool showRay = true;
     public bool showHitInfo = true;
@@ -65,6 +68,27 @@ public class RaycastDemo : MonoBehaviour
             rayOrigin.SetParent(transform);
 
             Debug.Log("已自动创建RayOrigin对象");
+        }
+
+        // 自动创建视线检测目标（如果为空）
+        if (lineOfSightTarget == null)
+        {
+            GameObject targetObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            targetObj.name = "LineOfSightTarget";
+            lineOfSightTarget = targetObj.transform;
+            lineOfSightTarget.position = transform.position + new Vector3(0, 0, 5);
+            lineOfSightTarget.localScale = Vector3.one * 0.5f;
+
+            // 添加颜色
+            Renderer renderer = lineOfSightTarget.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = new Material(Shader.Find("Standard"));
+                mat.color = Color.yellow;
+                renderer.material = mat;
+            }
+
+            Debug.Log("已自动创建LineOfSightTarget对象");
         }
     }
 
@@ -124,10 +148,24 @@ public class RaycastDemo : MonoBehaviour
                 break;
 
             case RaycastMode.LineOfSight:
-                // 视线检测：检查从rayOrigin到某个目标点的路径是否被遮挡
-                // 这里使用rayDirection作为目标方向
-                hasHit = Physics.Raycast(ray, out lastHit, rayLength, hitLayers, triggerInteraction);
-                // LineOfSight模式下，hasHit=true表示视线被遮挡
+                // 视线检测：检查从rayOrigin到目标的路径是否被遮挡
+                if (lineOfSightTarget != null)
+                {
+                    Vector3 directionToTarget = lineOfSightTarget.position - ray.origin;
+                    float distanceToTarget = directionToTarget.magnitude;
+
+                    // 检测到目标的射线是否被遮挡
+                    hasHit = Physics.Raycast(ray.origin, directionToTarget.normalized, out lastHit,
+                        distanceToTarget, hitLayers, triggerInteraction);
+
+                    // hasHit=true表示视线被遮挡，击中了障碍物
+                    // hasHit=false表示视线畅通，可以看到目标
+                }
+                else
+                {
+                    // 如果没有目标，使用默认方向
+                    hasHit = Physics.Raycast(ray, out lastHit, rayLength, hitLayers, triggerInteraction);
+                }
                 break;
         }
     }
@@ -191,7 +229,27 @@ public class RaycastDemo : MonoBehaviour
             case RaycastMode.Simple:
             case RaycastMode.RaycastAll:
             case RaycastMode.MouseRay:
-                DebugDrawer.DrawArrow(ray.origin, rayEnd, 0.3f);
+            case RaycastMode.LineOfSight:
+                // 简单射线和视线检测使用箭头
+                if (mode == RaycastMode.LineOfSight && lineOfSightTarget != null)
+                {
+                    // 视线检测：绘制到目标的射线
+                    Vector3 targetPos = lineOfSightTarget.position;
+                    Gizmos.color = hasHit ? Color.red : Color.green;
+                    DebugDrawer.DrawArrow(ray.origin, targetPos, 0.3f);
+
+                    // 绘制目标
+                    Gizmos.color = Color.yellow;
+                    Gizmos.DrawWireSphere(targetPos, 0.3f);
+
+                    // 显示状态
+                    DrawLabel(targetPos + Vector3.up * 0.8f,
+                        hasHit ? "视线被遮挡" : "视线畅通");
+                }
+                else
+                {
+                    DebugDrawer.DrawArrow(ray.origin, rayEnd, 0.3f);
+                }
                 break;
 
             case RaycastMode.SphereCast:
