@@ -1,6 +1,17 @@
-# Unity 3D数学学习项目
+# Unity 3D 數學學習項目 | Unity 3D Math Learning
 
-这是一个系统学习Unity 3D数学的实践项目，通过可视化示例帮助理解游戏开发中的核心数学概念。
+<div align="center">
+
+**透過視覺化範例與自動化實作，掌握遊戲開發中的 3D 數學核心**
+
+[![Unity](https://img.shields.io/badge/Unity-2017.1+-black.svg)](https://unity.com/)
+[![Language](https://img.shields.io/badge/Language-C%23-blue.svg)](https://learn.microsoft.com/en-us/dotnet/csharp/)
+[![Version](https://img.shields.io/badge/Version-v1.3.0-orange.svg)](CHANGELOG.md)
+[![Tests](https://img.shields.io/badge/Tests-15/15%20Passed-green.svg)](CODE_REVIEW.md)
+
+</div>
+
+---
 
 ## 🎯 项目目标
 
@@ -22,8 +33,20 @@
 - ✅ **第4章：坐标变换** (2个脚本) - 坐标转换、父子层级
 - ✅ **第5章：几何计算** (2个脚本) - 射线检测、距离计算
 - ✅ **第6章：综合应用** (3个脚本) - 朝向、跟随相机、抛物线
-- ✅ **公共工具** (3个脚本) - 调试绘制、数学辅助、单元测试
-- ✅ **代码质量** - 5.0/5.0 (15/15 单元测试通过)
+- ✅ **公共工具** (3 個腳本) - 偵錯繪製、數學輔助、單元測試
+- ✅ **代碼質量** - 5.0/5.0 (15/15 單元測試通過)
+
+## 🛡️ 穩定性與自動化 | Guaranteed Stability
+本專案與一般教學範例不同，強調 **「即插即用」**：
+- ✨ **100% 自動初始化**：將腳本掛載到 GameObject 後，所有輔助物件與 Gizmos 都會自動生成，無需手動配置場景。
+- ✅ **單元測試覆蓋**：所有數學核心邏輯均通過內置的 `MathTests` 驗證，確保計算精準無誤。
+
+## 🎨 視覺化學習 | Visual Learning Guide
+為了獲得最佳學習效果，建議：
+1. **進入專用場景**：專案中的 `Assets/Scenes/` 包含多個可互動場景。
+2. **切換 Gizmos**：確保 Unity 編輯器的 Gizmos 開關已打開，以便看到向量、射線與矩陣的實時繪製。
+3. **場景視角控制**：大部分範例在 Scene 視角下觀察效果更佳。
+
 
 ## 📚 学习路径
 
