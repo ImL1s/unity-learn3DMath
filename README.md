@@ -5,6 +5,7 @@
 **透過視覺化範例與自動化實作，掌握遊戲開發中的 3D 數學核心**
 
 [![Unity](https://img.shields.io/badge/Unity-2017.1+-black.svg)](https://unity.com/)
+[![Build Status](https://github.com/ImL1s/unity-learn3DMath/actions/workflows/ci.yml/badge.svg)](https://github.com/ImL1s/unity-learn3DMath/actions/workflows/ci.yml)
 [![Language](https://img.shields.io/badge/Language-C%23-blue.svg)](https://learn.microsoft.com/en-us/dotnet/csharp/)
 [![Version](https://img.shields.io/badge/Version-v1.3.0-orange.svg)](CHANGELOG.md)
 [![Tests](https://img.shields.io/badge/Tests-15/15%20Passed-green.svg)](CODE_REVIEW.md)
